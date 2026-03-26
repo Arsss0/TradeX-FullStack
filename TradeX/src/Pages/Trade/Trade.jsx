@@ -60,7 +60,7 @@ const [activeTab, setActiveTab] = useState("positions"); // "positions" или "
     try {
       const username = localStorage.getItem("user");
       if (!username) return;
-      const res = await axios.get(`http://localhost:5000/api/user/${username}`);
+      const res = await axios.get(`https://tradex-api-64m5.onrender.com/api/user/${username}`);
       setUserBalance(res.data.balance);
       localStorage.setItem("balance", res.data.balance);
     } catch (err) {
@@ -73,7 +73,7 @@ const [activeTab, setActiveTab] = useState("positions"); // "positions" или "
     try {
       const username = localStorage.getItem("user");
       if (!username) return;
-      const res = await axios.get(`http://localhost:5000/api/positions/${username}`);
+      const res = await axios.get(`https://tradex-api-64m5.onrender.com/api/positions/${username}`);
       setPositions(res.data);
     } catch (err) {
       console.error("Ошибка при загрузке позиций:", err);
@@ -92,7 +92,7 @@ const [activeTab, setActiveTab] = useState("positions"); // "positions" или "
 
     const username = localStorage.getItem("user");
     try {
-      const res = await axios.post(`http://localhost:5000/api/trade`, {
+      const res = await axios.post(`https://tradex-api-64m5.onrender.com/api/trade`, {
         username,
         coin,
         type, 
@@ -117,7 +117,7 @@ const [activeTab, setActiveTab] = useState("positions"); // "positions" или "
     const size = (parseFloat(amount) * leverage) / currentPrice;
 
     try {
-        const res = await axios.post("http://localhost:5000/api/futures/open", {
+        const res = await axios.post("https://tradex-api-64m5.onrender.com/api/futures/open", {
             username,
             coin,
             margin: parseFloat(amount),
@@ -143,7 +143,7 @@ const [activeTab, setActiveTab] = useState("positions"); // "positions" или "
   const handleClosePosition = async (id, currentPnl) => {
     const username = localStorage.getItem("user");
     try {
-        const res = await axios.post("http://localhost:5000/api/futures/close", {
+        const res = await axios.post("https://tradex-api-64m5.onrender.com/api/futures/close", {
             positionId: id,
             username: username,
             pnl: currentPnl
@@ -189,7 +189,7 @@ const [activeTab, setActiveTab] = useState("positions"); // "positions" или "
 const handleLiquidation = async (id) => {
     const username = localStorage.getItem("user");
     try {
-        await axios.post("http://localhost:5000/api/futures/liquidate", {
+        await axios.post("https://tradex-api-64m5.onrender.com/api/futures/liquidate", {
             positionId: id,
             username: username
         });
@@ -210,7 +210,7 @@ const handleLiquidation = async (id) => {
 const fetchHistory = async () => {
     try {
         const username = localStorage.getItem("user");
-        const res = await axios.get(`http://localhost:5000/api/history/${username}`);
+        const res = await axios.get(`https://tradex-api-64m5.onrender.com/api/history/${username}`);
         setHistory(res.data);
     } catch (err) {
         console.error("Ошибка загрузки истории:", err);

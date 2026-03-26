@@ -8,7 +8,7 @@ const Auth = () => {
 
     const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = isLogin ? 'http://localhost:5000/api/signin' : 'http://localhost:5000/api/signup';
+    const url = isLogin ? 'https://tradex-api-64m5.onrender.com/api/signin' : 'https://tradex-api-64m5.onrender.com/api/signup';
     
     try {
         const res = await axios.post(url, formData);

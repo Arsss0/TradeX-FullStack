@@ -35,7 +35,7 @@ const Convert = () => {
     if (!amount || amount <= 0) return alert("Введите сумму");
     
     try {
-      const res = await axios.post("http://localhost:5000/api/convert", {
+      const res = await axios.post("https://tradex-api-64m5.onrender.com/api/convert", {
         username: localStorage.getItem("user"),
         fromCoin,
         toCoin,

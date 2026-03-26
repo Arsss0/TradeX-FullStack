@@ -24,7 +24,7 @@ const Profile = () => {
       const username = localStorage.getItem("user");
       if (!username) return;
 
-      const res = await axios.get(`http://localhost:5000/api/user/${username}`);
+      const res = await axios.get(`https://tradex-api-64m5.onrender.com/api/user/${username}`);
       
       setUser({
         username: username,
@@ -46,7 +46,7 @@ const Profile = () => {
     const amount = window.prompt("Введите сумму для вывода (USDT):");
     if (amount && !isNaN(amount) && parseFloat(amount) > 0) {
       try {
-        const res = await axios.post("http://localhost:5000/api/withdraw", {
+        const res = await axios.post("https://tradex-api-64m5.onrender.com/api/withdraw", {
           username: user.username,
           amount: parseFloat(amount),
         });

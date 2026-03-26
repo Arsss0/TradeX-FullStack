@@ -17,7 +17,7 @@ const DepositCard = ({ onClose, onSuccess }) => {
 
   const handlePaySubmit = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/deposit", {
+      const res = await axios.post("https://tradex-api-64m5.onrender.com/api/deposit", {
         username: localStorage.getItem("user"),
         amount: parseFloat(card.amount),
       });

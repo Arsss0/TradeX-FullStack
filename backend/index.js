@@ -28,5 +28,5 @@ app.get('/', (req, res) => {
 });
 
 app.listen(5000, () => {
-  console.log('Бэкенд работает на http://localhost:5000');
+  console.log('Бэкенд работает на https://tradex-api-64m5.onrender.com');
 });

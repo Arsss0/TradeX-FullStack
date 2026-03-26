@@ -171,6 +171,51 @@ app.get('/api/history/:username', (req, res) => {
 });
 
 
+// РОУТ ДЛЯ ПОПОЛНЕНИЯ БАЛАНСА (DEPOSIT)
+app.post('/api/deposit', (req, res) => {
+    const { username, amount } = req.body;
+
+    if (!username || !amount || amount <= 0) {
+        return res.status(400).json({ message: "Неверные данные депозита" });
+    }
+
+    // 1. Сначала проверяем, существует ли пользователь
+    const checkUser = "SELECT balance FROM users WHERE username = ?";
+    db.query(checkUser, [username], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (results.length === 0) return res.status(404).json({ message: "Пользователь не найден" });
+
+        const currentBalance = parseFloat(results[0].balance);
+        const newBalance = currentBalance + parseFloat(amount);
+
+        // 2. Обновляем баланс в базе
+        const updateBalance = "UPDATE users SET balance = ? WHERE username = ?";
+        db.query(updateBalance, [newBalance, username], (updateErr) => {
+            if (updateErr) return res.status(500).json({ error: updateErr.message });
+
+            console.log(`Баланс пользователя ${username} пополнен на ${amount}. Новый баланс: ${newBalance}`);
+            res.json({ 
+                message: "Депозит успешно зачислен!", 
+                newBalance: newBalance 
+            });
+        });
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.use(cors({ origin: '*' }));
 
 

@@ -9,10 +9,20 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'crypto_db'
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'crypto_db',
+    port: process.env.DB_PORT || 3306
+});
+
+// Проверка подключения
+db.connect((err) => {
+    if (err) {
+        console.error('Ошибка подключения к БД:', err.message);
+    } else {
+        console.log('Успешное подключение к базе данных! ✅');
+    }
 });
 
 const SECRET_KEY = "my_super_secret_key_123";

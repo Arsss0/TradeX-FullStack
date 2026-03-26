@@ -1,0 +1,265 @@
+.header {
+    width: 100%;
+    height: 100px;
+    background-color: #000;
+    font-family: Lato;
+}
+
+.headerContainer {
+    height: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.left img{
+    width: 230px;
+}
+
+.center ul {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.center ul li{
+    list-style: none;
+}
+
+.center ul li a{
+    text-decoration: none;
+    color: #00e1ff;
+    cursor: pointer;
+    font-size: 20px;
+    font-family: LatoLight;
+    transition: .3s;
+}
+.center ul li a:hover {
+    padding: 10px;
+    font-size: 22px;
+    color: rgb(255, 255, 255);
+}
+
+.right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.signBtn {
+    padding: 10px 20px;
+    background-color: #00e1ff;
+    border-radius: 6px;
+    font-family: Lato;
+    font-size: 18px;
+    cursor: pointer;
+    border: 2px solid #00e1ff;
+    transition: .3s;
+
+    .signBtnLink {
+        color: rgb(5, 5, 5);
+        text-decoration: none;
+    }
+
+    .signBtnLink:hover{
+            color: white;
+    }
+}
+
+
+.signBtn:hover {
+    background-color: #000000;
+}
+
+
+.profileSection {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.profileLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #d6d6d6;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.profileLink:hover {
+  color: #0052ff;
+}
+
+.userAvatar {
+  width: 35px;
+  height: 35px;
+  background-color: #0052ff;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.logoutBtn {
+  background: none;
+  border: 1px solid #eff2f5;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #707a8a;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.logoutBtn:hover {
+  background-color: #ff4d4d;
+  color: white;
+  border-color: #ff4d4d;
+}
+
+
+
+
+
+
+
+.header {
+    width: 100%;
+    min-height: 80px; /* Заменил жесткие 100px на min-height */
+    background-color: #000;
+    font-family: Lato;
+    display: flex;
+    align-items: center;
+}
+
+.headerContainer {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.left img {
+    width: 180px; /* Немного уменьшил базовый размер */
+    transition: 0.3s;
+}
+
+.center ul {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 0;
+}
+
+.center ul li {
+    list-style: none;
+}
+
+.center ul li a {
+    text-decoration: none;
+    color: #00e1ff;
+    cursor: pointer;
+    font-size: 18px; /* Чуть уменьшил для баланса */
+    font-family: LatoLight;
+    transition: .3s;
+}
+
+/* --- MEDIA QUERIES --- */
+
+@media (max-width: 1024px) {
+    .center ul {
+        gap: 15px;
+    }
+    .center ul li a {
+        font-size: 16px;
+    }
+    .left img {
+        width: 150px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        height: auto;
+        padding: 10px 0;
+    }
+
+    .headerContainer {
+        flex-wrap: wrap; /* Позволяет элементам переноситься */
+        gap: 10px;
+    }
+
+    .left {
+        order: 1;
+    }
+
+    .right {
+        order: 2;
+    }
+
+    /* Навигация уходит на вторую строку для удобства */
+    .center {
+        order: 3;
+        width: 100%;
+        border-top: 1px solid #333;
+        padding-top: 10px;
+    }
+
+    .center ul {
+        justify-content: space-around;
+        gap: 10px;
+    }
+
+    .center ul li a {
+        font-size: 14px;
+    }
+
+    .left img {
+        width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .headerContainer {
+        justify-content: space-between;
+    }
+
+    /* Скрываем текст "Logout", оставляем только иконку или маленькую кнопку */
+    .logoutBtn {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    /* Прячем имя пользователя, оставляем только аватар */
+    .profileLink span {
+        display: none;
+    }
+
+    .userAvatar {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+
+    .signBtn {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+    
+    .center ul li a:hover {
+        font-size: 14px; /* Отключаем увеличение при наведении на мобилках */
+        padding: 0;
+    }
+}

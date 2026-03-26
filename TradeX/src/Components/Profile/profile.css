@@ -1,0 +1,233 @@
+.profilePage {
+  background-color: #f8fafd;
+  min-height: 100vh;
+  padding: 40px 0;
+}
+
+.profileContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Карточка баланса */
+.balanceCard {
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.balanceInfo span {
+  color: #707a8a;
+  font-size: 14px;
+}
+
+.balanceInfo h1 {
+  font-size: 42px;
+  margin: 10px 0;
+  color: #1e2329;
+}
+
+.balanceInfo h1 small {
+  font-size: 18px;
+  color: #707a8a;
+}
+
+.balanceActions {
+  display: flex;
+  gap: 12px;
+}
+
+.actionBtn {
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.actionBtn.deposit { background: #0052ff; color: white; }
+.actionBtn.withdraw { background: #f0f2f5; color: #1e2329; }
+.actionBtn.transfer { background: #f0f2f5; color: #1e2329; }
+
+.actionBtn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+/* Таблица активов */
+.assetsSection {
+  background: white;
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+}
+
+.assetsSection h3 { margin-bottom: 20px; font-size: 20px; }
+
+.assetsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.assetsTable th {
+  text-align: left;
+  color: #707a8a;
+  font-size: 13px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eff2f5;
+}
+
+.assetsTable td {
+  padding: 20px 0;
+  border-bottom: 1px solid #f8fafd;
+}
+
+.assetName {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.assetIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.assetIcon.usdt { background: #26a17b; }
+
+.assetName strong span {
+  display: block;
+  font-size: 12px;
+  color: #707a8a;
+  font-weight: 400;
+}
+
+.tableTradeBtn {
+  background: none;
+  border: 1px solid #eff2f5;
+  padding: 6px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.tableTradeBtn:hover {
+  background: #f0f5ff;
+  border-color: #0052ff;
+  color: #0052ff;
+}
+
+
+
+.profileContainer {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 15px; /* Зазор для мобилок */
+  box-sizing: border-box;
+}
+
+/* Карточка баланса */
+.balanceCard {
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  box-sizing: border-box;
+}
+
+/* Таблица активов */
+.assetsSection {
+  background: white;
+  padding: 30px;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
+}
+
+/* Контейнер для скролла таблицы */
+.assetsTableContainer {
+  width: 100%;
+  overflow-x: auto; /* Включаем горизонтальную прокрутку */
+  -webkit-overflow-scrolling: touch;
+}
+
+.assetsTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px; /* Минимальная ширина, чтобы данные не слипались */
+}
+
+/* --- MEDIA QUERIES --- */
+
+@media (max-width: 768px) {
+  .profilePage {
+    padding: 20px 0;
+  }
+
+  .balanceCard {
+    flex-direction: column; /* Складываем инфо и кнопки в столбик */
+    text-align: center;
+    padding: 25px;
+  }
+
+  .balanceInfo h1 {
+    font-size: 32px; /* Уменьшаем заголовок */
+  }
+
+  .balanceActions {
+    width: 100%;
+    margin-top: 25px;
+    flex-wrap: wrap; /* Кнопки перенесутся, если их много */
+    justify-content: center;
+  }
+
+  .actionBtn {
+    flex: 1; /* Кнопки растягиваются равномерно */
+    min-width: 120px;
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+
+  .assetsSection {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .balanceInfo h1 {
+    font-size: 28px;
+  }
+
+  .balanceInfo span {
+    font-size: 12px;
+  }
+
+  .assetsSection h3 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  /* На очень маленьких экранах делаем кнопки вывода/депозита на всю ширину */
+  .balanceActions {
+    flex-direction: column;
+  }
+
+  .actionBtn {
+    width: 100%;
+  }
+}

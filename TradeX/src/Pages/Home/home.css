@@ -1,0 +1,279 @@
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px;
+  box-sizing: border-box;
+  overflow-x: hidden; /* Чтобы ничего не вылазило боком */
+}
+
+/* СЕКЦИЯ 1: Исправляем наложение текста */
+.section1 {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 50px;
+  gap: 20px;
+}
+
+.section1 .left {
+  width: 45%;
+}
+
+.section1 .left img {
+  width: 100%;
+  max-width: 350px;
+  height: auto;
+}
+
+.section1 .right {
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Создаем четкое расстояние между строками */
+}
+
+.section1 .right h1 {
+  font-size: 52px;
+  line-height: 1.1; /* Чтобы буквы не липли друг к другу */
+  font-family: MulishBold;
+  color: #00c3dc;
+  margin: 0;
+}
+
+.section1 .right h2 {
+  font-size: 28px;
+  color: #008c9f;
+  margin: 5px 0;
+}
+
+.section1 .right p {
+  font-size: 22px;
+  color: rgb(36, 96, 96);
+  line-height: 1.4;
+}
+
+/* СЕКЦИЯ 3: Исправляем кнопку "Войти в рынок" */
+.section3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+}
+
+.section3 .left {
+  width: 50%;
+}
+
+.section3 .left img {
+  width: 100%;
+  max-width: 500px;
+}
+
+.section3 .right {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* СТИЛЬ КНОПКИ (h2 превращаем в кнопку) */
+.section3 .right h2 {
+  cursor: pointer;
+  font-size: 24px;
+  background-color: #00c3dc;
+  border-radius: 12px;
+  border: 3px solid #00c3dc;
+  transition: all 0.3s ease;
+  padding: 0; /* Убираем падинг у h2, переносим его на ссылку */
+  margin-top: 20px;
+}
+
+.section3 .right h2 a {
+  display: block; /* Ссылка занимает всю площадь кнопки */
+  padding: 15px 35px;
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.section3 .right h2:hover {
+  background-color: #ffffff;
+}
+
+.section3 .right h2:hover a {
+  color: #00c3dc;
+}
+
+/* --- АДАПТИВНОСТЬ ДЛЯ МОБИЛОК --- */
+
+@media (max-width: 850px) {
+  .section1, .section2, .section3 {
+    flex-direction: column !important;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .section1 .left, .section1 .right,
+  .section3 .left, .section3 .right {
+    width: 100% !important;
+  }
+
+
+
+  .section1 .right h1 {
+    font-size: 36px;
+  }
+
+  .section1 .right h2 {
+    font-size: 22px;
+  }
+
+  .section1 .right p {
+    font-size: 18px;
+  }
+
+  .section3 .right {
+    align-items: center; /* Кнопка по центру на мобилке */
+  }
+
+  .section3 .right h2 a {
+    padding: 12px 25px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .section1 .right h1 {
+    font-size: 30px;
+  }
+  
+  .section1 .right p {
+    font-size: 16px;
+  }
+}
+
+
+
+
+
+
+/* ЭФФЕКТ ГРАДИЕНТНОГО ТЕКСТА */
+.gradientText {
+  background: linear-gradient(90deg, #00c3dc, #0052ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 64px !important;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.heroSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 100px 0;
+  gap: 50px;
+  background: radial-gradient(circle at top right, rgba(0, 195, 220, 0.05), transparent);
+}
+
+.heroContent {
+  flex: 1;
+  text-align: left;
+}
+
+.heroContent h2 {
+  font-size: 28px;
+  color: #1e2329;
+  margin: 20px 0;
+  font-weight: 600;
+}
+
+.heroContent p {
+  font-size: 18px;
+  color: #707a8a;
+  max-width: 500px;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+/* КНОПКИ */
+.heroButtons {
+  display: flex;
+  gap: 20px;
+}
+
+.mainBtn {
+  background: #009ce5;
+  color: white;
+  border: none;
+  padding: 16px 35px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.mainBtn:hover {
+  background: #00b979;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 82, 255, 0.3);
+}
+
+.secondaryBtn {
+  background: transparent;
+  color: #1e2329;
+  border: 2px solid #eff2f5;
+  padding: 16px 35px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.secondaryBtn:hover {
+  background: #f8fafd;
+  border-color: #00c3dc;
+}
+
+.heroImage {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  animation: float 6s ease-in-out infinite; /* Эффект парения */
+}
+
+/* АНИМАЦИЯ ПАРЕНИЯ КАРТИНКИ */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+/* АДАПТИВНОСТЬ ДЛЯ HERO */
+@media (max-width: 850px) {
+  .heroSection {
+    flex-direction: column;
+    text-align: center;
+    padding: 60px 0;
+  }
+  .heroContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .gradientText {
+    font-size: 40px !important;
+  }
+  .heroImage {
+    justify-content: center;
+    order: -1; /* Картинка сверху на мобилках */
+
+    img {
+      width: 100px;
+    }
+  }
+}

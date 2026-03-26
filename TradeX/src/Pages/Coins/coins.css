@@ -1,0 +1,269 @@
+.coinsContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 0 15px; /* Защита от прилипания к краям */
+    box-sizing: border-box;
+}
+
+.topSection {
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap; /* Позволяет карточкам переноситься на новую строку */
+
+
+    .topCoin {
+        border-radius: 12px;
+        width: 260px;
+        height: 190px;
+        box-shadow: 0 0 5px #ccc;
+        display: flex;
+        flex-direction: column;
+        padding: 30px;
+
+        
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+
+            img {
+                width: 50px;
+            } 
+
+            h3 {
+                font-size: 24px;
+            }
+        }
+
+        .bottom {
+            margin-top: 40px;
+            display: flex;
+            justify-content: start;
+
+            p {
+                font-size: 20px;
+                font-weight:500;
+            }
+        }
+        
+    }
+}
+
+.marketSection {
+  margin-top: 50px;
+  background: #ffffff; /* Чисто белый фон для контраста */
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); /* Мягкая тень вместо границ */
+}
+
+.marketSection h2 {
+  font-size: 26px;
+  margin-bottom: 25px;
+  color: #000000;
+  font-weight: 700;
+}
+
+/* Стили таблицы */
+.marketTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.marketTable th {
+  text-align: left;
+  padding: 18px 15px;
+  color: #707a8a; /* Спокойный серый для заголовков */
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #eff2f5;
+}
+
+.marketTable td {
+  padding: 22px 15px;
+  border-bottom: 1px solid #eff2f5;
+  font-size: 18px;
+  font-weight: 500;
+  color: #1e2329;
+}
+
+/* Эффект при наведении */
+.marketTable tr:hover {
+  background-color: #f0f5ff; /* Нежно-голубой при наведении */
+  transition: all 0.2s ease;
+}
+
+/* Цвета для цен в светлой теме */
+/* Зеленый и красный должны быть чуть темнее, чтобы их было видно на белом */
+.price-up {
+  color: #03a66d !important; 
+}
+
+.price-down {
+  color: #cf304a !important;
+}
+
+/* Кнопка "Торговать" */
+.tradeBtn {
+  background-color: #00bfff; /* Классический синий (как у Coinbase) */
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+
+  a {
+    text-decoration: none;
+    color: white;
+  }
+}
+
+.tradeBtn:hover {
+  background-color: #007bcd;
+  box-shadow: 0 5px 15px rgba(0, 82, 255, 0.3);
+}
+
+/* Название монеты */
+.coinNameCell .symbol {
+  font-weight: 700;
+  color: #000;
+}
+
+.coinNameCell .pair {
+  color: #929ba6;
+  font-size: 13px;
+  margin-left: 4px;
+}
+
+
+
+
+
+
+
+
+
+.topSection .topCoin {
+    border-radius: 12px;
+    width: calc(25% - 15px); /* 4 в ряд на десктопе */
+    min-width: 250px; /* Чтобы не сжимались в кашу */
+    height: 190px;
+    box-shadow: 0 0 5px #ccc;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+/* Контейнер для таблицы с прокруткой */
+.marketSection {
+    margin-top: 50px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    overflow: hidden; /* Чтобы скругления углов не ломались */
+}
+
+.tableWrapper {
+    width: 100%;
+    overflow-x: auto; /* Включаем свайп влево-вправо на мобилках */
+    -webkit-overflow-scrolling: touch;
+}
+
+.marketTable {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px; /* Гарантируем, что таблица не слипнется */
+}
+
+/* --- MEDIA QUERIES --- */
+
+@media (max-width: 1100px) {
+    .topSection {
+        justify-content: center; /* Центрируем карточки, когда их становится 2 в ряд */
+    }
+    .topSection .topCoin {
+        width: calc(50% - 20px); /* 2 в ряд на планшетах */
+    }
+}
+
+@media (max-width: 768px) {
+    .topSection {
+        margin-top: 30px;
+    }
+    
+    .marketSection {
+        padding: 20px 15px;
+        margin-top: 30px;
+    }
+
+    .marketSection h2 {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .marketTable td {
+        padding: 15px 10px;
+        font-size: 16px; /* Чуть меньше шрифт на мобилках */
+    }
+
+    .tradeBtn {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 580px) {
+    .topSection .topCoin {
+        width: 100%; /* 1 карточка на всю ширину на телефонах */
+        height: auto;
+        padding: 20px;
+    }
+
+    .topSection .top {
+        img { width: 40px; }
+        h3 { font-size: 20px; }
+    }
+
+    .topSection .bottom {
+        margin-top: 25px;
+    }
+}
+
+
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto; /* Включает свайп */
+  -webkit-overflow-scrolling: touch; /* Плавный скролл на iPhone */
+  cursor: grab;
+}
+
+/* На мобилках уменьшаем отступы, чтобы больше данных влезло сразу */
+@media (max-width: 480px) {
+  .marketTable th, 
+  .marketTable td {
+    padding: 12px 8px; /* Уменьшаем внутренние поля */
+    font-size: 14px;   /* Уменьшаем шрифт цен */
+  }
+
+  .tradeBtn {
+    padding: 6px 12px; /* Делаем кнопку маленькой и аккуратной */
+    font-size: 12px;
+  }
+
+  /* Можно скрыть колонку "Изменение", чтобы кнопка Trade вылезла вперед */
+  .marketTable th:nth-child(3), 
+  .marketTable td:nth-child(3) {
+    display: none; 
+  }
+}

@@ -1,0 +1,67 @@
+@font-face {
+  font-family: Lato;
+  src: url('../public/fonts/Lato/Lato-Regular.ttf');
+}
+@font-face {
+  font-family: LatoBold;
+  src: url('../public/fonts/Lato/Lato-Bold.ttf');
+}
+@font-face {
+  font-family: LatoLight;
+  src: url('../public/fonts/Lato/Lato-Light.ttf');
+}
+
+@font-face {
+  font-family: Mulish;
+  src: url('../public/fonts/Mulish/Mulish-Regular.ttf');
+}
+@font-face {
+  font-family: MulishBold;
+  src: url('../public/fonts/Mulish/Mulish-Bold.ttf');
+}
+@font-face {
+  font-family: MulishLight;
+  src: url('../public/fonts/Mulish/Mulish-Light.ttf');
+}
+
+/* Глобальные сбросы */
+*, body {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box; /* Это критически важно для адаптивности */
+  font-family: Mulish;
+  -webkit-font-smoothing: antialiased; /* Делает шрифты мягче */
+}
+
+body {
+  overflow-x: hidden; /* Запрещает горизонтальный скролл всей страницы */
+  width: 100%;
+}
+
+/* АДАПТИВНЫЙ КОНТЕЙНЕР */
+.container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 20px; /* Боковые отступы, чтобы текст не касался краев на iPhone */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Глобальная адаптация медиа-файлов */
+img, video, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Скрытие элементов, которые не нужны на маленьких экранах (универсальный класс) */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+}

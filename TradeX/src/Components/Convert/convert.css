@@ -1,0 +1,118 @@
+.convertPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh; /* Заменил height на min-height для мобильных */
+  padding: 20px;    /* Чтобы карточка не касалась краев экрана */
+  box-sizing: border-box;
+}
+
+.convertBox {
+  background: white;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.inputBlock {
+  text-align: left;
+  margin: 15px 0;
+}
+
+.inputBlock label {
+  font-size: 13px;
+  color: #707a8a;
+}
+
+.inputBlock input {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #eff2f5;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 5px;
+  box-sizing: border-box; /* Чтобы padding не раздувал ширину */
+}
+
+.swapBtn {
+  background: #f0f2f5;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  transition: 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swapBtn:hover { background: #e2e6ea; }
+
+.priceInfo {
+  margin: 20px 0;
+  font-size: 14px;
+  color: #1e2329;
+}
+
+.convertSubmitBtn {
+  width: 100%;
+  background: #0052ff;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.convertSubmitBtn:hover { 
+  background: #0044d6; 
+  transform: translateY(-2px);
+}
+
+/* --- АДАПТИВНОСТЬ (Media Queries) --- */
+
+@media (max-width: 480px) {
+  .convertPage {
+    height: auto;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    align-items: flex-start; /* На маленьких экранах лучше начинать сверху */
+  }
+
+  .convertBox {
+    padding: 25px 20px; /* Уменьшаем внутренние отступы */
+    border-radius: 18px;
+  }
+
+  .inputBlock input {
+    font-size: 16px; /* Чуть меньше шрифт, чтобы не вылезал */
+    padding: 12px;
+  }
+
+  .convertSubmitBtn {
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .priceInfo {
+    font-size: 12px;
+  }
+}
+
+@media (max-height: 600px) {
+  /* Для телефонов в горизонтальном режиме */
+  .convertPage {
+    height: auto;
+    padding: 20px 0;
+  }
+}

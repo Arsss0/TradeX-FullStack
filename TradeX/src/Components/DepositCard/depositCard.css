@@ -1,0 +1,259 @@
+.paymentOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.paymentModal {
+    background: white;
+    padding: 30px;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+}
+
+.closeBtn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #707a8a;
+}
+
+/* Сама пластиковая карта */
+.visualCard {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #0052ff, #002d8d);
+    border-radius: 16px;
+    padding: 25px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 20px rgba(0, 82, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.visualCard::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+}
+
+.cardChip {
+    width: 45px;
+    height: 35px;
+    background: linear-gradient(135deg, #ffdc8a, #d4a328);
+    border-radius: 6px;
+}
+
+.cardNumber {
+    font-size: 22px;
+    letter-spacing: 3px;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 20px 0;
+}
+
+.cardBottom {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cardBottom span {
+    font-size: 10px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.cardBottom p {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 5px;
+}
+
+/* Форма */
+.inputBox {
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.inputBox span {
+    font-size: 12px;
+    color: #707a8a;
+    margin-bottom: 5px;
+}
+
+.inputBox input {
+    padding: 12px;
+    border: 1px solid #eff2f5;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+}
+
+.flexInput {
+    display: flex;
+    gap: 15px;
+}
+
+.amountInput {
+    border: 2px solid #0052ff !important;
+    font-weight: bold;
+    font-size: 18px !important;
+}
+
+.paySubmitBtn {
+    width: 100%;
+    background: #0052ff;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.2s;
+}
+
+.paySubmitBtn:hover {
+    background: #0044d6;
+    transform: translateY(-2px);
+}
+
+/* Базовые стили остаются те же, добавляем фиксы для гибкости */
+.paymentOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 15px; /* Зазор для мобилок */
+    box-sizing: border-box;
+}
+
+.paymentModal {
+    background: white;
+    padding: 30px;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    max-height: 95vh; /* Чтобы модалка не уходила за края экрана */
+    overflow-y: auto; /* Скролл, если экран совсем маленький */
+}
+
+/* Визуальная карта теперь адаптивная */
+.visualCard {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #0052ff, #002d8d);
+    border-radius: 16px;
+    padding: 25px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 20px rgba(0, 82, 255, 0.3);
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Форма и инпуты */
+.inputBox input {
+    padding: 12px;
+    border: 1px solid #eff2f5;
+    border-radius: 10px;
+    outline: none;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* --- MEDIA QUERIES --- */
+
+@media (max-width: 480px) {
+    .paymentModal {
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .visualCard {
+        height: 160px; /* Уменьшаем высоту карты */
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .cardChip {
+        width: 35px;
+        height: 25px;
+    }
+
+    .cardNumber {
+        font-size: 16px; /* Уменьшаем шрифт номера, чтобы не переносился */
+        letter-spacing: 2px;
+        margin: 10px 0;
+    }
+
+    .cardBottom p {
+        font-size: 12px;
+    }
+
+    .flexInput {
+        gap: 10px; /* Сужаем расстояние между Сроком и CVV */
+    }
+
+    .paySubmitBtn {
+        padding: 12px;
+        font-size: 15px;
+    }
+
+    .closeBtn {
+        top: 10px;
+        right: 15px;
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 360px) {
+    /* Для совсем маленьких экранов */
+    .cardNumber {
+        font-size: 14px;
+        letter-spacing: 1px;
+    }
+    
+    .visualCard {
+        height: 140px;
+    }
+}

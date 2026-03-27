@@ -125,18 +125,30 @@ app.post('/api/futures/close', (req, res) => {
 // --- СПОТ ТОРГОВЛЯ (ОБЫЧНАЯ) ---
 app.post('/api/trade', (req, res) => {
     const { username, coin, type, amount, price } = req.body;
-    console.log(`Попытка сделки! Юзер: "${username}", Монета: ${coin}, Тип: ${type}`);  
 
-    const totalCost = amount * price;
+    // 1. ПРОВЕРКА: Если данных нет, сразу выдаем ошибку, не мучая базу
+    if (!username || !coin || !amount || !price) {
+        return res.status(400).json({ error: "Не все данные переданы" });
+    }
 
-    // 1. Формируем название колонки динамически (например, 'eth_balance')
+    console.log(`Попытка сделки! Юзер: "${username}", Монета: ${coin}, Тип: ${type}`);
+
+    const totalCost = parseFloat((amount * price).toFixed(2)); // Округляем до 2 знаков
     const coinColumn = `${coin.toLowerCase()}_balance`;
 
-    // 2. Выбираем баланс USD и баланс нужной монеты
-    const selectSql = `SELECT balance, ${coinColumn} AS coin_balance FROM users WHERE username = ?`;
+    // 2. Ищем юзера без учета регистра (LOWER)
+    const selectSql = `SELECT balance, ${coinColumn} AS coin_balance FROM users WHERE LOWER(username) = LOWER(?)`;
 
     db.query(selectSql, [username], (err, rows) => {
-        if (err || rows.length === 0) return res.status(500).json({ error: "Ошибка БД или пользователь не найден" });
+        if (err) {
+            console.error("ОШИБКА БД (SELECT):", err);
+            return res.status(500).json({ error: "Ошибка базы данных" });
+        }
+        
+        if (rows.length === 0) {
+            console.log(`Юзер не найден: ${username}`);
+            return res.status(404).json({ error: "Пользователь не найден" });
+        }
         
         const balance = parseFloat(rows[0].balance);
         const coin_balance = parseFloat(rows[0].coin_balance);
@@ -144,21 +156,21 @@ app.post('/api/trade', (req, res) => {
         if (type === 'buy') {
             if (balance < totalCost) return res.status(400).json({ error: "Недостаточно USDT!" });
 
-            // Обновляем нужную колонку монеты через переменную coinColumn
-            const updateBuy = `UPDATE users SET balance = balance - ?, ${coinColumn} = ${coinColumn} + ? WHERE username = ?`;
+            const updateBuy = `UPDATE users SET balance = balance - ?, ${coinColumn} = ${coinColumn} + ? WHERE LOWER(username) = LOWER(?)`;
             
             db.query(updateBuy, [totalCost, amount, username], (err) => {
-                if (err) return res.status(500).json({ error: "Ошибка сделки" });
-                res.json({ message: `Покупка ${coin} успешна!`, newBalance: balance - totalCost });
+                if (err) return res.status(500).json({ error: "Ошибка обновления данных при покупке" });
+                res.json({ message: `Покупка ${coin} успешна!`, newBalance: (balance - totalCost).toFixed(2) });
             });
         } else {
-            if (coin_balance < amount) return res.status(400).json({ error: `Недостаточно ${coin}!` });
+            // ПРОВЕРКА: Чтобы не продать больше, чем есть (с учетом погрешности)
+            if (coin_balance < amount) return res.status(400).json({ error: `Недостаточно ${coin.toUpperCase()}!` });
 
-            const updateSell = `UPDATE users SET balance = balance + ?, ${coinColumn} = ${coinColumn} - ? WHERE username = ?`;
+            const updateSell = `UPDATE users SET balance = balance + ?, ${coinColumn} = ${coinColumn} - ? WHERE LOWER(username) = LOWER(?)`;
             
             db.query(updateSell, [totalCost, amount, username], (err) => {
-                if (err) return res.status(500).json({ error: "Ошибка сделки" });
-                res.json({ message: `Продажа ${coin} успешна!`, newBalance: balance + totalCost });
+                if (err) return res.status(500).json({ error: "Ошибка обновления данных при продаже" });
+                res.json({ message: `Продажа ${coin} успешна!`, newBalance: (balance + totalCost).toFixed(2) });
             });
         }
     });

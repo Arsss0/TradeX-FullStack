@@ -1,252 +1,315 @@
-const express = require('express');
-const mysql = require('mysql2');
-const cors = require('cors');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const express = require("express");
+const mysql = require("mysql2");
+const cors = require("cors");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'crypto_db',
-    port: process.env.DB_PORT || 3306
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "crypto_db",
+  port: process.env.DB_PORT || 3306,
 });
 
 // Проверка подключения
 db.connect((err) => {
-    if (err) {
-        console.error('Ошибка подключения к БД:', err.message);
-    } else {
-        console.log('Успешное подключение к базе данных! ✅');
-    }
+  if (err) {
+    console.error("Ошибка подключения к БД:", err.message);
+  } else {
+    console.log("Успешное подключение к базе данных! ✅");
+  }
 });
 
 const SECRET_KEY = "my_super_secret_key_123";
 
 // --- РЕГИСТРАЦИЯ И ВХОД (БЕЗ ИЗМЕНЕНИЙ) ---
-app.post('/api/signup', async (req, res) => {
-    const { username, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
-    db.query(sql, [username, email, hashedPassword], (err, result) => {
-        if (err) return res.status(500).json({ error: "Пользователь уже существует или ошибка БД" });
-        res.status(201).json({ message: "Успешная регистрация! Мы подарили вам $10,000" });
-    });
+app.post("/api/signup", async (req, res) => {
+  const { username, email, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+  db.query(sql, [username, email, hashedPassword], (err, result) => {
+    if (err)
+      return res
+        .status(500)
+        .json({ error: "Пользователь уже существует или ошибка БД" });
+    res
+      .status(201)
+      .json({ message: "Успешная регистрация! Мы подарили вам $10,000" });
+  });
 });
 
-app.post('/api/signin', (req, res) => {
-    const { email, password } = req.body;
-    const sql = "SELECT * FROM users WHERE email = ?";
-    db.query(sql, [email], async (err, results) => {
-        if (err || results.length === 0) return res.status(401).json({ error: "Пользователь не найден" });
-        const user = results[0];
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (isMatch) {
-            const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: '1d' });
-            res.json({ token, username: user.username, balance: user.balance });
-        } else {
-            res.status(401).json({ error: "Неверный пароль" });
-        }
-    });
+app.post("/api/signin", (req, res) => {
+  const { email, password } = req.body;
+  const sql = "SELECT * FROM users WHERE email = ?";
+  db.query(sql, [email], async (err, results) => {
+    if (err || results.length === 0)
+      return res.status(401).json({ error: "Пользователь не найден" });
+    const user = results[0];
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (isMatch) {
+      const token = jwt.sign(
+        { id: user.id, username: user.username },
+        SECRET_KEY,
+        { expiresIn: "1d" },
+      );
+      res.json({ token, username: user.username, balance: user.balance });
+    } else {
+      res.status(401).json({ error: "Неверный пароль" });
+    }
+  });
 });
 
 // --- РАБОТА С БАЛАНСОМ (БЕЗ ИЗМЕНЕНИЙ) ---
-app.get('/api/user/:username', (req, res) => {
-    const username = req.params.username;
-    db.query("SELECT balance, btc_balance FROM users WHERE username = ?", [username], (err, results) => {
-        if (err || results.length === 0) return res.status(500).send("User not found");
-        res.json(results[0]);
-    });
+app.get("/api/user/:username", (req, res) => {
+  const username = req.params.username;
+  db.query(
+    "SELECT balance, btc_balance FROM users WHERE username = ?",
+    [username],
+    (err, results) => {
+      if (err || results.length === 0)
+        return res.status(500).send("User not found");
+      res.json(results[0]);
+    },
+  );
 });
 
 // --- ФЬЮЧЕРСЫ: ОТКРЫТИЕ ПОЗИЦИИ (ИСПРАВЛЕНО) ---
-app.post('/api/futures/open', (req, res) => {
-    const { username, coin, margin, leverage, size, entryPrice, type } = req.body;
+app.post("/api/futures/open", (req, res) => {
+  const { username, coin, margin, leverage, size, entryPrice, type } = req.body;
 
-    // 1. Проверяем баланс
-    db.query("SELECT balance FROM users WHERE username = ?", [username], (err, result) => {
-        if (err) return res.status(500).json({ error: "Ошибка БД" });
-        if (result.length === 0) return res.status(404).json({ error: "Пользователь не найден" });
-        
-        const currentBalance = parseFloat(result[0].balance);
-        if (currentBalance < margin) return res.status(400).json({ error: "Недостаточно средств для маржи" });
+  // 1. Проверяем баланс
+  db.query(
+    "SELECT balance FROM users WHERE username = ?",
+    [username],
+    (err, result) => {
+      if (err) return res.status(500).json({ error: "Ошибка БД" });
+      if (result.length === 0)
+        return res.status(404).json({ error: "Пользователь не найден" });
 
-        // 2. Списываем маржу
-        db.query("UPDATE users SET balance = balance - ? WHERE username = ?", [margin, username], (updErr) => {
-            if (updErr) return res.status(500).json({ error: "Ошибка списания баланса" });
+      const currentBalance = parseFloat(result[0].balance);
+      if (currentBalance < margin)
+        return res
+          .status(400)
+          .json({ error: "Недостаточно средств для маржи" });
 
-            // 3. Создаем позицию
-            const sql = "INSERT INTO positions (username, coin, margin, leverage, size, entry_price, type, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'open')";
-            db.query(sql, [username, coin, margin, leverage, size, entryPrice, type], (insErr) => {
-                if (insErr) {
-                    console.error("ОШИБКА SQL ПРИ INSERT:", insErr);
-                    return res.status(500).json({ error: "Ошибка записи позиции. Проверь таблицу!" });
-                }
-                res.json({ message: "Фьючерсная позиция открыта!" });
-            });
-        });
-    });
+      // 2. Списываем маржу
+      db.query(
+        "UPDATE users SET balance = balance - ? WHERE username = ?",
+        [margin, username],
+        (updErr) => {
+          if (updErr)
+            return res.status(500).json({ error: "Ошибка списания баланса" });
+
+          // 3. Создаем позицию
+          const sql =
+            "INSERT INTO positions (username, coin, margin, leverage, size, entry_price, type, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'open')";
+          db.query(
+            sql,
+            [username, coin, margin, leverage, size, entryPrice, type],
+            (insErr) => {
+              if (insErr) {
+                console.error("ОШИБКА SQL ПРИ INSERT:", insErr);
+                return res
+                  .status(500)
+                  .json({ error: "Ошибка записи позиции. Проверь таблицу!" });
+              }
+              res.json({ message: "Фьючерсная позиция открыта!" });
+            },
+          );
+        },
+      );
+    },
+  );
 });
 
 // --- ФЬЮЧЕРСЫ: ПОЛУЧЕНИЕ ПОЗИЦИЙ ---
-app.get('/api/positions/:username', (req, res) => {
-    const username = req.params.username;
-    const sql = "SELECT * FROM positions WHERE username = ? AND status = 'open'";
-    db.query(sql, [username], (err, results) => {
-        if (err) return res.status(500).send(err);
-        res.json(results);
-    });
+app.get("/api/positions/:username", (req, res) => {
+  const username = req.params.username;
+  const sql = "SELECT * FROM positions WHERE username = ? AND status = 'open'";
+  db.query(sql, [username], (err, results) => {
+    if (err) return res.status(500).send(err);
+    res.json(results);
+  });
 });
 
 // --- ФЬЮЧЕРСЫ: ЗАКРЫТИЕ ПОЗИЦИИ ---
-app.post('/api/futures/close', (req, res) => {
-    const { positionId, username, pnl } = req.body;
+app.post("/api/futures/close", (req, res) => {
+  const { positionId, username, pnl } = req.body;
 
-    db.query("SELECT margin FROM positions WHERE id = ? AND username = ? AND status = 'open'", [positionId, username], (err, rows) => {
-        if (err || rows.length === 0) return res.status(404).json({ error: "Позиция не найдена" });
+  db.query(
+    "SELECT margin FROM positions WHERE id = ? AND username = ? AND status = 'open'",
+    [positionId, username],
+    (err, rows) => {
+      if (err || rows.length === 0)
+        return res.status(404).json({ error: "Позиция не найдена" });
 
-        const margin = parseFloat(rows[0].margin);
-        const totalReturn = margin + parseFloat(pnl);
+      const margin = parseFloat(rows[0].margin);
+      const totalReturn = margin + parseFloat(pnl);
 
-        db.query("UPDATE users SET balance = balance + ? WHERE username = ?", [totalReturn, username], (updErr) => {
-            if (updErr) return res.status(500).json({ error: "Ошибка возврата средств" });
+      db.query(
+        "UPDATE users SET balance = balance + ? WHERE username = ?",
+        [totalReturn, username],
+        (updErr) => {
+          if (updErr)
+            return res.status(500).json({ error: "Ошибка возврата средств" });
 
-            db.query("UPDATE positions SET status = 'closed' WHERE id = ?", [positionId], () => {
-                res.json({ message: "Позиция закрыта!", payout: totalReturn.toFixed(2) });
-            });
-        });
-    });
+          db.query(
+            "UPDATE positions SET status = 'closed' WHERE id = ?",
+            [positionId],
+            () => {
+              res.json({
+                message: "Позиция закрыта!",
+                payout: totalReturn.toFixed(2),
+              });
+            },
+          );
+        },
+      );
+    },
+  );
 });
 
 // --- СПОТ ТОРГОВЛЯ (ОБЫЧНАЯ) ---
-app.post('/api/trade', (req, res) => {
-    const { username, coin, type, amount, price } = req.body;
+app.post("/api/trade", (req, res) => {
+  const { username, coin, type, amount, price } = req.body;
 
-    // 1. ПРОВЕРКА: Если данных нет, сразу выдаем ошибку, не мучая базу
-    if (!username || !coin || !amount || !price) {
-        return res.status(400).json({ error: "Не все данные переданы" });
+  // 1. ПРОВЕРКА: Если данных нет, сразу выдаем ошибку, не мучая базу
+  if (!username || !coin || !amount || !price) {
+    return res.status(400).json({ error: "Не все данные переданы" });
+  }
+
+  console.log(
+    `Попытка сделки! Юзер: "${username}", Монета: ${coin}, Тип: ${type}`,
+  );
+
+  const cleanCoin = coin.toLowerCase().replace("usdt", "");
+  const coinColumn = `${cleanCoin}_balance`;
+
+  console.log(`Торгуем: ${cleanCoin}. Ищем колонку: ${coinColumn}`);
+  // 2. Ищем юзера без учета регистра (LOWER)
+  const selectSql = `SELECT balance, ${coinColumn} AS coin_balance FROM users WHERE LOWER(username) = LOWER(?)`;
+
+  db.query(selectSql, [username], (err, rows) => {
+    if (err) {
+      console.error("ОШИБКА БД (SELECT):", err);
+      return res.status(500).json({ error: "Ошибка базы данных" });
     }
 
-    console.log(`Попытка сделки! Юзер: "${username}", Монета: ${coin}, Тип: ${type}`);
+    if (rows.length === 0) {
+      console.log(`Юзер не найден: ${username}`);
+      return res.status(404).json({ error: "Пользователь не найден" });
+    }
 
-    const totalCost = parseFloat((amount * price).toFixed(2)); // Округляем до 2 знаков
-    const coinColumn = coin.toLowerCase() === 'usdt' ? 'balance' : `${coin.toLowerCase()}_balance`;
-    console.log(`Торгуем: ${coin}. Ищем колонку: ${coinColumn}`);
-    // 2. Ищем юзера без учета регистра (LOWER)
-    const selectSql = `SELECT balance, ${coinColumn} AS coin_balance FROM users WHERE LOWER(username) = LOWER(?)`;
+    const balance = parseFloat(rows[0].balance);
+    const coin_balance = parseFloat(rows[0].coin_balance);
 
-    db.query(selectSql, [username], (err, rows) => {
-        if (err) {
-            console.error("ОШИБКА БД (SELECT):", err);
-            return res.status(500).json({ error: "Ошибка базы данных" });
-        }
-        
-        if (rows.length === 0) {
-            console.log(`Юзер не найден: ${username}`);
-            return res.status(404).json({ error: "Пользователь не найден" });
-        }
-        
-        const balance = parseFloat(rows[0].balance);
-        const coin_balance = parseFloat(rows[0].coin_balance);
+    if (type === "buy") {
+      if (balance < totalCost)
+        return res.status(400).json({ error: "Недостаточно USDT!" });
 
-        if (type === 'buy') {
-            if (balance < totalCost) return res.status(400).json({ error: "Недостаточно USDT!" });
+      const updateBuy = `UPDATE users SET balance = balance - ?, ${coinColumn} = ${coinColumn} + ? WHERE LOWER(username) = LOWER(?)`;
 
-            const updateBuy = `UPDATE users SET balance = balance - ?, ${coinColumn} = ${coinColumn} + ? WHERE LOWER(username) = LOWER(?)`;
-            
-            db.query(updateBuy, [totalCost, amount, username], (err) => {
-                if (err) return res.status(500).json({ error: "Ошибка обновления данных при покупке" });
-                res.json({ message: `Покупка ${coin} успешна!`, newBalance: (balance - totalCost).toFixed(2) });
-            });
-        } else {
-            // ПРОВЕРКА: Чтобы не продать больше, чем есть (с учетом погрешности)
-            if (coin_balance < amount) return res.status(400).json({ error: `Недостаточно ${coin.toUpperCase()}!` });
+      db.query(updateBuy, [totalCost, amount, username], (err) => {
+        if (err)
+          return res
+            .status(500)
+            .json({ error: "Ошибка обновления данных при покупке" });
+        res.json({
+          message: `Покупка ${coin} успешна!`,
+          newBalance: (balance - totalCost).toFixed(2),
+        });
+      });
+    } else {
+      // ПРОВЕРКА: Чтобы не продать больше, чем есть (с учетом погрешности)
+      if (coin_balance < amount)
+        return res
+          .status(400)
+          .json({ error: `Недостаточно ${coin.toUpperCase()}!` });
 
-            const updateSell = `UPDATE users SET balance = balance + ?, ${coinColumn} = ${coinColumn} - ? WHERE LOWER(username) = LOWER(?)`;
-            
-            db.query(updateSell, [totalCost, amount, username], (err) => {
-                if (err) return res.status(500).json({ error: "Ошибка обновления данных при продаже" });
-                res.json({ message: `Продажа ${coin} успешна!`, newBalance: (balance + totalCost).toFixed(2) });
-            });
-        }
-    });
+      const updateSell = `UPDATE users SET balance = balance + ?, ${coinColumn} = ${coinColumn} - ? WHERE LOWER(username) = LOWER(?)`;
+
+      db.query(updateSell, [totalCost, amount, username], (err) => {
+        if (err)
+          return res
+            .status(500)
+            .json({ error: "Ошибка обновления данных при продаже" });
+        res.json({
+          message: `Продажа ${coin} успешна!`,
+          newBalance: (balance + totalCost).toFixed(2),
+        });
+      });
+    }
+  });
 });
 
-app.post('/api/futures/liquidate', (req, res) => {
-    const { positionId, username } = req.body;
+app.post("/api/futures/liquidate", (req, res) => {
+  const { positionId, username } = req.body;
 
-    // Просто помечаем позицию как ликвидированную (status: liquidated)
-    // Деньги на баланс НЕ возвращаем!
-    db.query("UPDATE positions SET status = 'liquidated' WHERE id = ? AND username = ?", [positionId, username], (err) => {
-        if (err) return res.status(500).json({ error: "Ошибка при ликвидации" });
-        
-        res.json({ message: "Позиция ликвидирована! Баланс потерян." });
-    });
+  // Просто помечаем позицию как ликвидированную (status: liquidated)
+  // Деньги на баланс НЕ возвращаем!
+  db.query(
+    "UPDATE positions SET status = 'liquidated' WHERE id = ? AND username = ?",
+    [positionId, username],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Ошибка при ликвидации" });
+
+      res.json({ message: "Позиция ликвидирована! Баланс потерян." });
+    },
+  );
 });
 
-app.get('/api/history/:username', (req, res) => {
-    const username = req.params.username;
-    // Тянем сделки, которые НЕ 'open'
-    const sql = "SELECT * FROM positions WHERE username = ? AND status != 'open' ORDER BY created_at DESC LIMIT 20";
-    
-    db.query(sql, [username], (err, results) => {
-        if (err) return res.status(500).send(err);
-        res.json(results);
-    });
-});
+app.get("/api/history/:username", (req, res) => {
+  const username = req.params.username;
+  // Тянем сделки, которые НЕ 'open'
+  const sql =
+    "SELECT * FROM positions WHERE username = ? AND status != 'open' ORDER BY created_at DESC LIMIT 20";
 
+  db.query(sql, [username], (err, results) => {
+    if (err) return res.status(500).send(err);
+    res.json(results);
+  });
+});
 
 // РОУТ ДЛЯ ПОПОЛНЕНИЯ БАЛАНСА (DEPOSIT)
-app.post('/api/deposit', (req, res) => {
-    const { username, amount } = req.body;
+app.post("/api/deposit", (req, res) => {
+  const { username, amount } = req.body;
 
-    if (!username || !amount || amount <= 0) {
-        return res.status(400).json({ message: "Неверные данные депозита" });
-    }
+  if (!username || !amount || amount <= 0) {
+    return res.status(400).json({ message: "Неверные данные депозита" });
+  }
 
-    // 1. Сначала проверяем, существует ли пользователь
-    const checkUser = "SELECT balance FROM users WHERE username = ?";
-    db.query(checkUser, [username], (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
-        if (results.length === 0) return res.status(404).json({ message: "Пользователь не найден" });
+  // 1. Сначала проверяем, существует ли пользователь
+  const checkUser = "SELECT balance FROM users WHERE username = ?";
+  db.query(checkUser, [username], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    if (results.length === 0)
+      return res.status(404).json({ message: "Пользователь не найден" });
 
-        const currentBalance = parseFloat(results[0].balance);
-        const newBalance = currentBalance + parseFloat(amount);
+    const currentBalance = parseFloat(results[0].balance);
+    const newBalance = currentBalance + parseFloat(amount);
 
-        // 2. Обновляем баланс в базе
-        const updateBalance = "UPDATE users SET balance = ? WHERE username = ?";
-        db.query(updateBalance, [newBalance, username], (updateErr) => {
-            if (updateErr) return res.status(500).json({ error: updateErr.message });
+    // 2. Обновляем баланс в базе
+    const updateBalance = "UPDATE users SET balance = ? WHERE username = ?";
+    db.query(updateBalance, [newBalance, username], (updateErr) => {
+      if (updateErr) return res.status(500).json({ error: updateErr.message });
 
-            console.log(`Баланс пользователя ${username} пополнен на ${amount}. Новый баланс: ${newBalance}`);
-            res.json({ 
-                message: "Депозит успешно зачислен!", 
-                newBalance: newBalance 
-            });
-        });
+      console.log(
+        `Баланс пользователя ${username} пополнен на ${amount}. Новый баланс: ${newBalance}`,
+      );
+      res.json({
+        message: "Депозит успешно зачислен!",
+        newBalance: newBalance,
+      });
     });
+  });
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-app.use(cors({ origin: '*' }));
-
+app.use(cors({ origin: "*" }));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Сервер запущен на порту ${PORT}`))
+app.listen(PORT, () => console.log(`Сервер запущен на порту ${PORT}`));

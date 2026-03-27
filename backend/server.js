@@ -181,10 +181,12 @@ app.post('/api/trade', (req, res) => {
     if (!coin || !username) return res.status(400).json({ error: "Данные не полные" });
 
     // 1. ОЧИСТКА: превращаем 'BTCUSDT' или 'BTC' просто в 'btc'
-    const cleanCoin = coin.toLowerCase().replace('usdt', '');
-    const coinColumn = `${cleanCoin}_balance`;
+   const cleanCoin = coin.toLowerCase().replace('usdt', '');
 
-    console.log(`Торговля: юзер ${username}, монета ${cleanCoin}, колонка ${coinColumn}`);
+// 2. Теперь формируем правильное имя колонки, которое есть в DBeaver
+const coinColumn = `${cleanCoin}_balance`;
+
+console.log(`Торгуем монетой: ${cleanCoin}. Ищем в колонке: ${coinColumn}`);
 
     const totalCost = parseFloat((amount * price).toFixed(2));
 

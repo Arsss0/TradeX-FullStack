@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import DepositCard from "../DepositCard/DepositCard"; 
 import "./profile.css";
 
-// Если список монет не импортирован, объявляем его здесь
 const coinsList = [
   "btcusdt", "ethusdt", "solusdt", "bnbusdt", "xrpusdt", "adausdt", "dotusdt", "avaxusdt",
   "dogeusdt", "shibusdt", "pepeusdt", "nearusdt", "linkusdt", "trxusdt"
@@ -14,11 +13,10 @@ const Profile = () => {
   const [user, setUser] = useState({
     username: localStorage.getItem("user") || "User",
     balance: "0",
-    btc_balance: "0",
-    // Если в будущем добавишь другие балансы в базу, добавь их сюда
+    // Теперь храним все балансы в одном объекте
+    balances: {} 
   });
 
-  // 1. ФУНКЦИЯ ЗАГРУЗКИ ДАННЫХ ИЗ БАЗЫ
   const fetchUserData = async () => {
     try {
       const username = localStorage.getItem("user");
@@ -29,7 +27,8 @@ const Profile = () => {
       setUser({
         username: username,
         balance: res.data.balance || "0",
-        btc_balance: res.data.btc_balance || "0",
+        // Сохраняем весь объект данных из базы (там будут btc_balance, eth_balance и т.д.)
+        balances: res.data 
       });
 
       localStorage.setItem("balance", res.data.balance);
@@ -63,14 +62,15 @@ const Profile = () => {
     fetchUserData();
   };
 
-  // 3. ФОРМИРОВАНИЕ МАССИВА АКТИВОВ
   const assets = coinsList.map((symbol) => {
-    const coinName = symbol.replace("usdt", "").toUpperCase();
+    const coinShort = symbol.replace("usdt", ""); // 'btc', 'eth'
+    const coinName = coinShort.toUpperCase(); // 'BTC', 'ETH'
     
-    // Пока у нас в БД только btc_balance, для остальных ставим 0
-    const amountValue = coinName === "BTC" ? user.btc_balance : "0.00";
+    // ДИНАМИЧЕСКИЙ ПОИСК БАЛАНСА:
+    // Ищем в объекте balances поле типа 'eth_balance'
+    const dbColumnName = `${coinShort}_balance`;
+    const amountValue = user.balances[dbColumnName] || "0.00";
     
-    // Генерируем цвет иконки на основе названия (чтобы он был постоянным для монеты)
     const stringToColor = (str) => {
       let hash = 0;
       for (let i = 0; i < str.length; i++) {
@@ -82,7 +82,8 @@ const Profile = () => {
     return {
       coin: coinName,
       symbol: coinName,
-      amount: parseFloat(amountValue).toFixed(coinName === "BTC" ? 8 : 2),
+      // Для BTC 8 знаков, для остальных 4 (или 2)
+      amount: parseFloat(amountValue).toFixed(coinName === "BTC" ? 8 : 4),
       color: coinName === "BTC" ? "#f3ba2f" : stringToColor(coinName)
     };
   });
@@ -91,7 +92,6 @@ const Profile = () => {
     <div className="profilePage">
       <div className="container profileContainer">
         
-        {/* КАРТОЧКА БАЛАНСА */}
         <div className="balanceCard">
           <div className="balanceInfo">
             <span>Общий баланс счета</span>
@@ -110,7 +110,6 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* ТАБЛИЦА АКТИВОВ */}
         <div className="assetsSection">
           <h3>Мои активы</h3>
           <div className="assetsTableContainer">
@@ -124,7 +123,6 @@ const Profile = () => {
                 </tr>
               </thead>
               <tbody>
-                {/* USDT ВСЕГДА ПЕРВЫЙ */}
                 <tr>
                   <td>
                     <div className="assetName">
@@ -137,7 +135,6 @@ const Profile = () => {
                   <td><button className="tableTradeBtn" onClick={() => window.location.href='/trade/btcusdt'}>Trade</button></td>
                 </tr>
 
-                {/* ОСТАЛЬНЫЕ МОНЕТЫ ИЗ СПИСКА */}
                 {assets.map((asset) => (
                   <tr key={asset.symbol}>
                     <td>
@@ -165,14 +162,12 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* МОДАЛЬНОЕ ОКНО КАРТЫ */}
         {isModalOpen && (
           <DepositCard 
             onClose={() => setIsModalOpen(false)} 
             onSuccess={handleDepositSuccess} 
           />
         )}
-
       </div>
     </div>
   );

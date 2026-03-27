@@ -125,6 +125,8 @@ app.post('/api/futures/close', (req, res) => {
 // --- СПОТ ТОРГОВЛЯ (ОБЫЧНАЯ) ---
 app.post('/api/trade', (req, res) => {
     const { username, coin, type, amount, price } = req.body;
+    console.log(`Попытка сделки! Юзер: "${username}", Монета: ${coin}, Тип: ${type}`);  
+
     const totalCost = amount * price;
 
     // 1. Формируем название колонки динамически (например, 'eth_balance')

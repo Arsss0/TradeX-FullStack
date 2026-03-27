@@ -127,21 +127,36 @@ app.post('/api/trade', (req, res) => {
     const { username, coin, type, amount, price } = req.body;
     const totalCost = amount * price;
 
-    db.query("SELECT balance, btc_balance FROM users WHERE username = ?", [username], (err, rows) => {
-        if (err || rows.length === 0) return res.status(500).json({ error: "Ошибка БД" });
-        const { balance, btc_balance } = rows[0];
+    // 1. Формируем название колонки динамически (например, 'eth_balance')
+    const coinColumn = `${coin.toLowerCase()}_balance`;
+
+    // 2. Выбираем баланс USD и баланс нужной монеты
+    const selectSql = `SELECT balance, ${coinColumn} AS coin_balance FROM users WHERE username = ?`;
+
+    db.query(selectSql, [username], (err, rows) => {
+        if (err || rows.length === 0) return res.status(500).json({ error: "Ошибка БД или пользователь не найден" });
+        
+        const balance = parseFloat(rows[0].balance);
+        const coin_balance = parseFloat(rows[0].coin_balance);
 
         if (type === 'buy') {
             if (balance < totalCost) return res.status(400).json({ error: "Недостаточно USDT!" });
-            db.query("UPDATE users SET balance = balance - ?, btc_balance = btc_balance + ? WHERE username = ?", [totalCost, amount, username], (err) => {
+
+            // Обновляем нужную колонку монеты через переменную coinColumn
+            const updateBuy = `UPDATE users SET balance = balance - ?, ${coinColumn} = ${coinColumn} + ? WHERE username = ?`;
+            
+            db.query(updateBuy, [totalCost, amount, username], (err) => {
                 if (err) return res.status(500).json({ error: "Ошибка сделки" });
-                res.json({ message: "Покупка успешна!", newBalance: balance - totalCost });
+                res.json({ message: `Покупка ${coin} успешна!`, newBalance: balance - totalCost });
             });
         } else {
-            if (btc_balance < amount) return res.status(400).json({ error: "Недостаточно монет!" });
-            db.query("UPDATE users SET balance = balance + ?, btc_balance = btc_balance - ? WHERE username = ?", [totalCost, amount, username], (err) => {
+            if (coin_balance < amount) return res.status(400).json({ error: `Недостаточно ${coin}!` });
+
+            const updateSell = `UPDATE users SET balance = balance + ?, ${coinColumn} = ${coinColumn} - ? WHERE username = ?`;
+            
+            db.query(updateSell, [totalCost, amount, username], (err) => {
                 if (err) return res.status(500).json({ error: "Ошибка сделки" });
-                res.json({ message: "Продажа успешна!", newBalance: balance + totalCost });
+                res.json({ message: `Продажа ${coin} успешна!`, newBalance: balance + totalCost });
             });
         }
     });

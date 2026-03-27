@@ -134,8 +134,8 @@ app.post('/api/trade', (req, res) => {
     console.log(`Попытка сделки! Юзер: "${username}", Монета: ${coin}, Тип: ${type}`);
 
     const totalCost = parseFloat((amount * price).toFixed(2)); // Округляем до 2 знаков
-    const coinColumn = `${coin.toLowerCase()}_balance`;
-
+    const coinColumn = coin.toLowerCase() === 'usdt' ? 'balance' : `${coin.toLowerCase()}_balance`;
+    console.log(`Торгуем: ${coin}. Ищем колонку: ${coinColumn}`);
     // 2. Ищем юзера без учета регистра (LOWER)
     const selectSql = `SELECT balance, ${coinColumn} AS coin_balance FROM users WHERE LOWER(username) = LOWER(?)`;
 
